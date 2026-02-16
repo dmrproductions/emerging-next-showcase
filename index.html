@@ -1,568 +1,365 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fashion TV Channel - Live Stream</title>
-    
-    <!-- Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
-    
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    
-    <!-- Animation Libraries -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/js/splide.min.js"></script>
-    <link href="https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/css/splide.min.css" rel="stylesheet">
-    
-    <!-- Custom Styles -->
-    <style>
-        :root {
-            --primary-dark: #1a1a1a;
-            --primary-light: #fafafa;
-            --accent-gold: #d4af37;
-            --accent-rose: #e8d5d0;
-            --accent-sage: #a8b5a0;
-            --text-dark: #2d2d2d;
-        }
-        
-        body {
-            font-family: 'Inter', sans-serif;
-            background: linear-gradient(135deg, var(--primary-dark) 0%, #2d2d2d 100%);
-            color: var(--primary-light);
-            overflow-x: hidden;
-        }
-        
-        .hero-section {
-            background: url('resources/hero-fashion.jpg') center/cover no-repeat;
-            position: relative;
-            min-height: 100vh;
-        }
-        
-        .hero-overlay {
-            background: linear-gradient(45deg, rgba(26, 26, 26, 0.8) 0%, rgba(45, 45, 45, 0.6) 100%);
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-        }
-        
-        .fashion-title {
-            font-family: 'Playfair Display', serif;
-            font-weight: 700;
-            background: linear-gradient(45deg, var(--accent-gold), var(--accent-rose));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-        
-        .video-player-container {
-            background: rgba(26, 26, 26, 0.95);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(212, 175, 55, 0.2);
-            border-radius: 16px;
-            overflow: hidden;
-        }
-        
-        .player-controls {
-            background: linear-gradient(90deg, rgba(26, 26, 26, 0.9) 0%, rgba(45, 45, 45, 0.9) 100%);
-            backdrop-filter: blur(20px);
-        }
-        
-        .control-btn {
-            background: rgba(212, 175, 55, 0.1);
-            border: 1px solid rgba(212, 175, 55, 0.3);
-            color: var(--accent-gold);
-            transition: all 0.3s ease;
-        }
-        
-        .control-btn:hover {
-            background: rgba(212, 175, 55, 0.2);
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(212, 175, 55, 0.3);
-        }
-        
-        .schedule-card {
-            background: rgba(26, 26, 26, 0.8);
-            backdrop-filter: blur(15px);
-            border: 1px solid rgba(232, 213, 208, 0.1);
-            transition: all 0.4s ease;
-        }
-        
-        .schedule-card:hover {
-            transform: translateY(-8px);
-            border-color: rgba(212, 175, 55, 0.4);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
-        }
-        
-        .live-indicator {
-            background: linear-gradient(45deg, #ff4757, #ff6b7a);
-            animation: pulse 2s infinite;
-        }
-        
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.7; }
-        }
-        
-        .designer-card {
-            background: rgba(26, 26, 26, 0.9);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(168, 181, 160, 0.2);
-            transition: all 0.4s ease;
-        }
-        
-        .designer-card:hover {
-            transform: scale(1.05);
-            border-color: var(--accent-gold);
-            box-shadow: 0 15px 35px rgba(212, 175, 55, 0.2);
-        }
-        
-        .floating-nav {
-            background: rgba(26, 26, 26, 0.95);
-            backdrop-filter: blur(20px);
-            border-bottom: 1px solid rgba(212, 175, 55, 0.2);
-        }
-        
-        .nav-link {
-            color: var(--primary-light);
-            transition: all 0.3s ease;
-            position: relative;
-        }
-        
-        .nav-link::after {
-            content: '';
-            position: absolute;
-            bottom: -2px;
-            left: 0;
-            width: 0;
-            height: 2px;
-            background: var(--accent-gold);
-            transition: width 0.3s ease;
-        }
-        
-        .nav-link:hover::after,
-        .nav-link.active::after {
-            width: 100%;
-        }
-        
-        .content-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
-        }
-        
-        .gradient-text {
-            background: linear-gradient(45deg, var(--accent-gold), var(--accent-rose));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-        
-        .aurora-bg {
-            background: linear-gradient(45deg, 
-                rgba(212, 175, 55, 0.1) 0%, 
-                rgba(232, 213, 208, 0.1) 25%,
-                rgba(168, 181, 160, 0.1) 50%,
-                rgba(212, 175, 55, 0.1) 75%,
-                rgba(232, 213, 208, 0.1) 100%);
-            background-size: 400% 400%;
-            animation: aurora 8s ease-in-out infinite;
-        }
-        
-        @keyframes aurora {
-            0%, 100% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-        }
-        
-        .mobile-menu {
-            transform: translateX(-100%);
-            transition: transform 0.3s ease;
-        }
-        
-        .mobile-menu.active {
-            transform: translateX(0);
-        }
-        
-        @media (max-width: 768px) {
-            .hero-section {
-                min-height: 80vh;
-            }
-            
-            .fashion-title {
-                font-size: 2.5rem;
-            }
-            
-            .video-player-container {
-                margin: 1rem;
-            }
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Emerging Next Showcase 2026 - Friday March 13</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { 
+    font-family: 'Helvetica Neue', Arial, sans-serif; 
+    background: #fafafa; 
+    padding: 20px;
+  }
+  h1 { 
+    text-align: center; 
+    margin: 20px 0 10px; 
+    font-size: 2.2em; 
+    color: #222;
+  }
+  .subtitle {
+    text-align: center;
+    color: #666;
+    margin-bottom: 30px;
+    font-size: 1.1em;
+  }
+  .section-header {
+    background: #333;
+    color: white;
+    padding: 15px 20px;
+    margin: 30px 0 20px;
+    border-radius: 8px;
+    font-size: 1.3em;
+    font-weight: bold;
+    text-align: center;
+  }
+  .row-container { 
+    display: grid; 
+    grid-template-columns: repeat(4, 1fr); 
+    gap: 20px; 
+    max-width: 1800px; 
+    margin: 0 auto 40px;
+  }
+  .individual-row {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  .designer { 
+    background: white; 
+    border: 2px solid #ddd; 
+    border-radius: 8px; 
+    padding: 20px; 
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    min-height: 400px;
+  }
+  .designer.placeholder {
+    background: #f9f9f9;
+    border: 2px dashed #ccc;
+  }
+  .designer h2 { 
+    font-size: 1.1em; 
+    border-bottom: 2px solid #000; 
+    padding-bottom: 8px; 
+    margin-bottom: 10px;
+    color: #111;
+  }
+  .designer.placeholder h2 {
+    color: #999;
+  }
+  .designer h3 {
+    font-size: 0.9em;
+    color: #666;
+    margin-bottom: 10px;
+  }
+  .model { 
+    padding: 12px; 
+    margin: 8px 0; 
+    border-radius: 6px; 
+    background: #f5f5f5; 
+    cursor: pointer; 
+    transition: all 0.2s;
+    font-size: 0.95em;
+    line-height: 1.5;
+    text-decoration: none;
+    display: block;
+    color: inherit;
+    border-left: 4px solid #ffa726;
+  }
+  .model:hover { 
+    background: #e8e8e8; 
+    transform: translateX(4px);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
+  .model.confirmed {
+    background: #e8f5e9 !important;
+    border-left: 4px solid #2e7d32 !important;
+  }
+  .conflict-3way {
+    background: #ff5252 !important;
+    border-left: 4px solid #b71c1c !important;
+    color: white;
+  }
+  .conflict-3way .model-name,
+  .conflict-3way .model-height,
+  .conflict-3way .conflict-details {
+    color: white;
+  }
+  .conflict {
+    background: #ffebee !important; 
+    border-left: 4px solid #c62828 !important;
+  }
+  .backup { 
+    background: #fafafa; 
+    color: #666; 
+    font-style: italic;
+    border-left-color: #bbb !important;
+  }
+  .model-num { font-weight: bold; color: #333; }
+  .conflict-3way .model-num { color: white; }
+  .model-name { color: #555; display: block; margin-top: 2px; }
+  .model-height { color: #888; font-size: 0.9em; }
+  .conflict-details {
+    font-size: 0.8em;
+    color: #666;
+    margin-top: 4px;
+    padding: 4px 0;
+    border-top: 1px solid #ddd;
+  }
+  .conflict-3way .conflict-details {
+    border-top-color: rgba(255,255,255,0.3);
+  }
+  .pending-badge {
+    background: #ffa726;
+    color: white;
+    padding: 2px 8px;
+    border-radius: 3px;
+    font-size: 0.75em;
+    margin-left: 8px;
+    font-weight: bold;
+  }
+  .confirmed-badge {
+    background: #2e7d32;
+    color: white;
+    padding: 3px 8px;
+    border-radius: 3px;
+    font-size: 0.75em;
+    margin-left: 8px;
+    font-weight: bold;
+  }
+  .conflict-3way-badge {
+    background: #b71c1c;
+    color: white;
+    padding: 3px 8px;
+    border-radius: 3px;
+    font-size: 0.75em;
+    margin-left: 8px;
+    font-weight: bold;
+  }
+  .conflict-badge { 
+    background: #c62828; 
+    color: white; 
+    padding: 2px 8px; 
+    border-radius: 3px; 
+    font-size: 0.75em; 
+    margin-left: 8px;
+    font-weight: bold;
+  }
+  .profile-link-icon {
+    float: right;
+    color: #999;
+    font-size: 0.85em;
+  }
+  .conflict-3way .profile-link-icon {
+    color: white;
+  }
+  .looks-count {
+    background: #1976d2;
+    color: white;
+    padding: 6px 12px;
+    border-radius: 4px;
+    font-size: 0.9em;
+    font-weight: bold;
+    display: inline-block;
+    margin-bottom: 12px;
+  }
+  .pending-note {
+    background: #fff3e0;
+    padding: 8px;
+    border-radius: 4px;
+    font-size: 0.9em;
+    color: #e65100;
+    margin: 8px 0;
+  }
+  .placeholder-text {
+    background: #f0f0f0;
+    padding: 15px;
+    border-radius: 6px;
+    color: #666;
+    text-align: center;
+    margin: 20px 0;
+    font-style: italic;
+  }
+  @media (max-width: 1400px) {
+    .row-container {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    .individual-row {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  @media (max-width: 768px) {
+    .row-container, .individual-row {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
 </head>
 <body>
-    <!-- Floating Navigation -->
-    <nav class="floating-nav fixed top-0 left-0 right-0 z-50 px-6 py-4">
-        <div class="max-w-7xl mx-auto flex items-center justify-between">
-            <div class="flex items-center space-x-4">
-                <h1 class="text-2xl font-bold fashion-title">Fashion TV</h1>
-                <span class="text-sm text-gray-400">LIVE CHANNEL</span>
-            </div>
-            
-            <!-- Desktop Navigation -->
-            <div class="hidden md:flex items-center space-x-8">
-                <a href="index.html" class="nav-link active">Live</a>
-                <a href="schedule.html" class="nav-link">Schedule</a>
-                <a href="library.html" class="nav-link">Library</a>
-            </div>
-            
-            <!-- Mobile Menu Button -->
-            <button id="mobile-menu-btn" class="md:hidden text-white">
-                <i class="fas fa-bars text-xl"></i>
-            </button>
-        </div>
-        
-        <!-- Mobile Menu -->
-        <div id="mobile-menu" class="mobile-menu fixed top-0 left-0 w-64 h-full bg-gray-900 z-40 md:hidden">
-            <div class="p-6 pt-20">
-                <a href="index.html" class="block py-3 text-lg nav-link active">Live</a>
-                <a href="schedule.html" class="block py-3 text-lg nav-link">Schedule</a>
-                <a href="library.html" class="block py-3 text-lg nav-link">Library</a>
-            </div>
-        </div>
-    </nav>
+<h1>Emerging Next Showcase</h1>
+<div class="subtitle">Friday, March 13, 2026</div>
 
-    <!-- Hero Section with Video Player -->
-    <section class="hero-section flex items-center justify-center relative">
-        <div class="hero-overlay"></div>
-        <div class="relative z-10 w-full max-w-7xl mx-auto px-6 py-20">
-            <div class="text-center mb-12">
-                <h1 class="text-6xl md:text-8xl font-bold fashion-title animated-title mb-6">
-                    FASHION TV
-                </h1>
-                <p class="text-xl md:text-2xl text-gray-300 mb-8">
-                    Your 24/7 destination for fashion shows, documentaries, and designer interviews
-                </p>
-                <div class="flex items-center justify-center space-x-4 mb-8">
-                    <span class="live-indicator px-4 py-2 rounded-full text-white text-sm font-semibold">
-                        <i class="fas fa-circle mr-2"></i>LIVE NOW
-                    </span>
-                    <span class="text-gray-400">Paris Fashion Week - Chanel Spring 2024</span>
-                </div>
-            </div>
-            
-            <!-- Main Video Player -->
-            <div class="video-player-container mb-8">
-                <div id="player-container" class="relative">
-                    <!-- YouTube Embedded Player -->
-                    <div class="aspect-video bg-black rounded-t-2xl overflow-hidden">
-                        <iframe 
-                            id="main-player"
-                            src="https://www.youtube.com/embed/videoseries?list=PLrAXtmErZgOeiKm4sgNOknGvNjby9efdf" 
-                            title="Fashion TV Live Stream"
-                            frameborder="0" 
-                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
-                            allowfullscreen
-                            class="w-full h-full"
-                        ></iframe>
-                    </div>
-                    
-                    <!-- Custom Player Controls -->
-                    <div class="player-controls px-6 py-4 flex items-center justify-between">
-                        <div class="flex items-center space-x-4">
-                            <button id="play-btn" class="control-btn w-12 h-12 rounded-full flex items-center justify-center">
-                                <i class="fas fa-play"></i>
-                            </button>
-                            <div class="flex items-center space-x-2">
-                                <i class="fas fa-volume-up text-gray-400"></i>
-                                <input type="range" id="volume-slider" class="w-24" min="0" max="100" value="75">
-                            </div>
-                        </div>
-                        
-                        <div id="current-video-info" class="text-center">
-                            <h3 class="current-title text-lg font-semibold text-white">Paris Fashion Week - Chanel Spring 2024</h3>
-                            <p class="current-time text-sm text-gray-400">Live • Now Playing</p>
-                        </div>
-                        
-                        <div class="flex items-center space-x-4">
-                            <button class="control-btn w-12 h-12 rounded-full flex items-center justify-center">
-                                <i class="fas fa-share-alt"></i>
-                            </button>
-                            <button id="fullscreen-btn" class="control-btn w-12 h-12 rounded-full flex items-center justify-center">
-                                <i class="fas fa-expand"></i>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
+<div class="section-header">🎨 Redding Fashion Alliance (Group Presentation)</div>
+<div id="rfa-showcase" class="row-container"></div>
 
-    <!-- Current Programming Section -->
-    <section class="py-20 aurora-bg">
-        <div class="max-w-7xl mx-auto px-6">
-            <div class="text-center mb-16">
-                <h2 class="text-4xl md:text-5xl font-bold fashion-title mb-6 animated-title">
-                    What's On Now
-                </h2>
-                <p class="text-xl text-gray-400 max-w-3xl mx-auto">
-                    Stay tuned for the latest fashion shows, designer interviews, and exclusive behind-the-scenes content
-                </p>
-            </div>
-            
-            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-                <!-- Now Playing Card -->
-                <div class="schedule-card p-6 rounded-2xl animate-on-scroll">
-                    <div class="flex items-center justify-between mb-4">
-                        <span class="live-indicator px-3 py-1 rounded-full text-white text-xs font-semibold">
-                            LIVE
-                        </span>
-                        <span class="text-gray-400 text-sm">10:00 AM</span>
-                    </div>
-                    <h3 class="text-xl font-semibold mb-3 gradient-text">Paris Fashion Week</h3>
-                    <p class="text-gray-300 mb-4">Chanel Spring/Summer 2024 Collection</p>
-                    <div class="flex items-center justify-between">
-                        <span class="text-sm text-gray-400">Ready-to-Wear Show</span>
-                        <button class="text-accent-gold hover:text-accent-rose transition-colors">
-                            <i class="fas fa-external-link-alt"></i>
-                        </button>
-                    </div>
-                </div>
-                
-                <!-- Next Up Card -->
-                <div class="schedule-card p-6 rounded-2xl animate-on-scroll border-2 border-accent-gold">
-                    <div class="flex items-center justify-between mb-4">
-                        <span class="bg-accent-gold text-black px-3 py-1 rounded-full text-xs font-semibold">
-                            NEXT
-                        </span>
-                        <span class="text-gray-400 text-sm">11:00 AM</span>
-                    </div>
-                    <h3 class="text-xl font-semibold mb-3">Designer Spotlight</h3>
-                    <p class="text-gray-300 mb-4">Exclusive Interview with Donatella Versace</p>
-                    <div class="flex items-center justify-between">
-                        <span class="text-sm text-gray-400">Interview</span>
-                        <button class="text-accent-gold hover:text-accent-rose transition-colors">
-                            <i class="far fa-bell"></i>
-                        </button>
-                    </div>
-                </div>
-                
-                <!-- Coming Up Card -->
-                <div class="schedule-card p-6 rounded-2xl animate-on-scroll">
-                    <div class="flex items-center justify-between mb-4">
-                        <span class="bg-gray-600 text-white px-3 py-1 rounded-full text-xs font-semibold">
-                            LATER
-                        </span>
-                        <span class="text-gray-400 text-sm">12:00 PM</span>
-                    </div>
-                    <h3 class="text-xl font-semibold mb-3">Fashion Documentary</h3>
-                    <p class="text-gray-300 mb-4">The Legend of Yves Saint Laurent</p>
-                    <div class="flex items-center justify-between">
-                        <span class="text-sm text-gray-400">Documentary</span>
-                        <button class="text-accent-gold hover:text-accent-rose transition-colors">
-                            <i class="far fa-heart"></i>
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
+<div class="section-header">👤 Individual Designer Presentations</div>
+<div id="individual-showcase" class="row-container individual-row"></div>
 
-    <!-- Featured Designers Carousel -->
-    <section class="py-20">
-        <div class="max-w-7xl mx-auto px-6">
-            <div class="text-center mb-16">
-                <h2 class="text-4xl md:text-5xl font-bold fashion-title mb-6 animated-title">
-                    Featured Designers
-                </h2>
-                <p class="text-xl text-gray-400 max-w-3xl mx-auto">
-                    Discover the creative minds shaping the future of fashion
-                </p>
-            </div>
-            
-            <div class="designer-carousel splide">
-                <div class="splide__track">
-                    <ul class="splide__list">
-                        <li class="splide__slide">
-                            <div class="designer-card p-8 rounded-2xl text-center">
-                                <div class="w-24 h-24 bg-gradient-to-br from-accent-gold to-accent-rose rounded-full mx-auto mb-6 flex items-center justify-center">
-                                    <i class="fas fa-crown text-3xl text-white"></i>
-                                </div>
-                                <h3 class="text-2xl font-bold designer-name mb-3">Chanel</h3>
-                                <p class="text-gray-400 mb-4">Iconic French luxury fashion house founded in 1910</p>
-                                <div class="text-sm text-gray-500">
-                                    <p>Creative Director: Virginie Viard</p>
-                                    <p>Specialty: Haute Couture</p>
-                                </div>
-                            </div>
-                        </li>
-                        
-                        <li class="splide__slide">
-                            <div class="designer-card p-8 rounded-2xl text-center">
-                                <div class="w-24 h-24 bg-gradient-to-br from-accent-rose to-accent-sage rounded-full mx-auto mb-6 flex items-center justify-center">
-                                    <i class="fas fa-gem text-3xl text-white"></i>
-                                </div>
-                                <h3 class="text-2xl font-bold designer-name mb-3">Dior</h3>
-                                <p class="text-gray-400 mb-4">French luxury fashion house known for elegant femininity</p>
-                                <div class="text-sm text-gray-500">
-                                    <p>Creative Director: Maria Grazia Chiuri</p>
-                                    <p>Specialty: Haute Couture</p>
-                                </div>
-                            </div>
-                        </li>
-                        
-                        <li class="splide__slide">
-                            <div class="designer-card p-8 rounded-2xl text-center">
-                                <div class="w-24 h-24 bg-gradient-to-br from-accent-sage to-accent-gold rounded-full mx-auto mb-6 flex items-center justify-center">
-                                    <i class="fas fa-star text-3xl text-white"></i>
-                                </div>
-                                <h3 class="text-2xl font-bold designer-name mb-3">Gucci</h3>
-                                <p class="text-gray-400 mb-4">Italian luxury brand known for bold, eclectic designs</p>
-                                <div class="text-sm text-gray-500">
-                                    <p>Creative Director: Sabato De Sarno</p>
-                                    <p>Specialty: Ready-to-Wear</p>
-                                </div>
-                            </div>
-                        </li>
-                        
-                        <li class="splide__slide">
-                            <div class="designer-card p-8 rounded-2xl text-center">
-                                <div class="w-24 h-24 bg-gradient-to-br from-accent-gold to-accent-sage rounded-full mx-auto mb-6 flex items-center justify-center">
-                                    <i class="fas fa-heart text-3xl text-white"></i>
-                                </div>
-                                <h3 class="text-2xl font-bold designer-name mb-3">Versace</h3>
-                                <p class="text-gray-400 mb-4">Italian luxury brand known for bold prints and glamour</p>
-                                <div class="text-sm text-gray-500">
-                                    <p>Creative Director: Donatella Versace</p>
-                                    <p>Specialty: Ready-to-Wear</p>
-                                </div>
-                            </div>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </section>
+<script>
+const modelData = {
+  "101": { name: "Madison Mae Martin (Maddy Mae)", height: "5'10\"" },
+  "104": { name: "Anais Nicole Cojocaru", height: "5'10\"" },
+  "107": { name: "Danielle Aderemi", height: "5'10\"" },
+  "119": { name: "Hennessy DAUZ Formoso", height: "5'5\"" },
+  "120": { name: "Kristina Rafaelova", height: "5'8\"" },
+  "121": { name: "Anastasiya Pinchuk", height: "5'9\"" },
+  "125": { name: "Kyndal Rogers", height: "5'9\"" },
+  "134": { name: "Oriella Kiza", height: "5'9\"" },
+  "135": { name: "Allison Cooper", height: "5'9\"" },
+  "149": { name: "Cayla Moore", height: "5'10\"" },
+  "155": { name: "Sasha von Sydow", height: "5'7\"" },
+  "159": { name: "Bre Briggs", height: "5'8\"" },
+  "160": { name: "Jazmyn Videau", height: "5'11\"" },
+  "165": { name: "Breawna Maynard", height: "5'10\"" },
+  "171": { name: "Sophia Bui", height: "5'9\"" },
+  "172": { name: "Isabella Cram", height: "5'10\"" },
+  "174": { name: "Cindy Adam", height: "5'10.5\"" },
+  "176": { name: "Amanda Zanganeh Azam", height: "5'10\"" },
+  "177": { name: "Mia Rodriguez", height: "5'8\"" },
+  "190": { name: "Emma Thompson", height: "5'9\"" },
+  "197": { name: "Olivia Chen", height: "5'10\"" },
+  "201": { name: "Sophia Martinez", height: "5'8\"" },
+  "203": { name: "Isabella Garcia", height: "5'9\"" },
+  "204": { name: "Alana Didricksen", height: "5'6\"" },
+  "207": { name: "Kila Angelo", height: "5'9\"" },
+  "208": { name: "Ava Johnson", height: "5'7\"" },
+  "211": { name: "Charlotte Davis", height: "5'9\"" },
+  "213": { name: "Amelia Wilson", height: "5'8\"" },
+  "214": { name: "Gretchen Forsyth", height: "5'11\"" },
+  "217": { name: "Sophie Rae", height: "5'4\"" },
+  "228": { name: "Christina Van Dyke", height: "5'4\"" },
+  "239": { name: "Ava Krueger", height: "5'6\"" },
+  "246": { name: "Kateryna Levandovska", height: "5'7\"" },
+  "288": { name: "Ashley Lewis", height: "5'10\"" },
+  "291": { name: "Peyton Udoffia", height: "5'9\"" },
+  "304": { name: "Shalu Vinu", height: "5'6\"" },
+  "MORGAN": { name: "Morgan Williamson (own model)", height: "TBD" }
+};
 
-    <!-- Quick Access Section -->
-    <section class="py-20 bg-gradient-to-br from-gray-900 to-black">
-        <div class="max-w-7xl mx-auto px-6">
-            <div class="text-center mb-16">
-                <h2 class="text-4xl md:text-5xl font-bold fashion-title mb-6 animated-title">
-                    Quick Access
-                </h2>
-                <p class="text-xl text-gray-400 max-w-3xl mx-auto">
-                    Jump directly to your favorite fashion content
-                </p>
-            </div>
-            
-            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-                <a href="schedule.html" class="schedule-card p-8 rounded-2xl text-center group hover:bg-accent-gold hover:text-black transition-all duration-300">
-                    <div class="text-4xl mb-4 group-hover:text-black">
-                        <i class="fas fa-calendar-alt"></i>
-                    </div>
-                    <h3 class="text-xl font-semibold mb-2">Weekly Schedule</h3>
-                    <p class="text-gray-400 group-hover:text-gray-700">View complete programming schedule</p>
-                </a>
-                
-                <a href="library.html" class="schedule-card p-8 rounded-2xl text-center group hover:bg-accent-rose hover:text-black transition-all duration-300">
-                    <div class="text-4xl mb-4 group-hover:text-black">
-                        <i class="fas fa-film"></i>
-                    </div>
-                    <h3 class="text-xl font-semibold mb-2">Content Library</h3>
-                    <p class="text-gray-400 group-hover:text-gray-700">Browse on-demand fashion content</p>
-                </a>
-                
-                <div class="schedule-card p-8 rounded-2xl text-center group hover:bg-accent-sage hover:text-black transition-all duration-300 cursor-pointer">
-                    <div class="text-4xl mb-4 group-hover:text-black">
-                        <i class="fas fa-heart"></i>
-                    </div>
-                    <h3 class="text-xl font-semibold mb-2">My Favorites</h3>
-                    <p class="text-gray-400 group-hover:text-gray-700">Access your saved content</p>
-                </div>
-                
-                <div class="schedule-card p-8 rounded-2xl text-center group hover:bg-purple-600 hover:text-black transition-all duration-300 cursor-pointer">
-                    <div class="text-4xl mb-4 group-hover:text-black">
-                        <i class="fas fa-bell"></i>
-                    </div>
-                    <h3 class="text-xl font-semibold mb-2">Reminders</h3>
-                    <p class="text-gray-400 group-hover:text-gray-700">Manage show notifications</p>
-                </div>
-            </div>
-        </div>
-    </section>
+const rfaDesigners = [
+  { name: "Julie Kong", brand: "Sugarcane Sweet Designs", looks: 3, primary: [204, 239, 246], backup: [217, 228], confirmed: [204] },
+  { name: "Rena Hembrock", brand: "Rena Elizabeth", looks: 3, primary: [119, 304], backup: [], pending: "Third model TBD (awaiting final garment)" },
+  { name: "Antonia Kostelec", brand: "Kostelec Bridal", looks: 2, primary: [125, 155], backup: [] },
+  { name: "Decarol", brand: "DLR Designs", looks: null, primary: [], backup: [], placeholder: true, placeholderText: "Model selections pending" }
+];
 
-    <!-- Footer -->
-    <footer class="bg-black py-12 border-t border-gray-800">
-        <div class="max-w-7xl mx-auto px-6 text-center">
-            <div class="mb-8">
-                <h3 class="text-3xl font-bold fashion-title mb-4">Fashion TV</h3>
-                <p class="text-gray-400 max-w-2xl mx-auto">
-                    Your premier destination for fashion content, bringing you the latest shows, 
-                    designer interviews, and exclusive behind-the-scenes access from the world of fashion.
-                </p>
-            </div>
-            
-            <div class="border-t border-gray-800 pt-8">
-                <p class="text-gray-500">
-                    © 2025 Fashion TV Channel. All rights reserved. Content sourced from legitimate free channels.
-                </p>
-            </div>
-        </div>
-    </footer>
+const individualDesigners = [
+  { name: "Anita Ivayo", brand: "LiBush", email: "ivayodesign@gmail.com", looks: null, primary: [], backup: [], placeholder: true, placeholderText: "Model selections pending" },
+  { name: "Myra Lowder", brand: "Myra Kim Designs", email: "myralowder@yahoo.com", looks: 12, primary: [104, 120, 125, 135, 159, 160, 171, 176, 190, 197, 201, 203, "MORGAN"], backup: [208, 211, 213, 177], confirmed: [135, 203, "MORGAN"] },
+  { name: "Tamika Huff", brand: "MBA Nicolay", email: "mikanicolaypr@gmail.com", looks: 10, primary: [101, 107, 121, 125, 149, 165, 172, 214, 288, 291], backup: [104, 134, 174, 176, 207] }
+];
 
-    <!-- Scripts -->
-    <script src="content-database.js"></script>
-    <script src="main.js"></script>
+const conflicts = {
+  "125": { designers: ["Antonia Kostelec (RFA)", "Myra Lowder", "Tamika Huff"], type: "3-way" },
+  "104": { designers: ["Myra Lowder (primary)", "Tamika Huff (backup)"], type: "2-way" },
+  "176": { designers: ["Myra Lowder (primary)", "Tamika Huff (backup)"], type: "2-way" }
+};
+
+function getModelPoolURL(castingNum) {
+  if (castingNum === "MORGAN") return 'https://script.google.com/macros/s/AKfycbxP_W3CbE3G9CUvkjFHQzZHT7LKWujj2fdZJSOmv9tfC5bBkrnYEjJXO7jMl_ZGhE7F2w/exec?profile=MORGAN';
+  return 'https://script.google.com/macros/s/AKfycbxP_W3CbE3G9CUvkjFHQzZHT7LKWujj2fdZJSOmv9tfC5bBkrnYEjJXO7jMl_ZGhE7F2w/exec?profile=' + castingNum;
+}
+
+function createModelCard(num, isBackup, designerName, designerConfirmed) {
+  const model = modelData[num.toString()];
+  const conflictInfo = conflicts[num.toString()];
+  const isConfirmed = designerConfirmed.includes(num);
+  
+  const mDiv = document.createElement('a');
+  mDiv.href = getModelPoolURL(num);
+  mDiv.target = '_blank';
+  mDiv.className = 'model';
+  
+  if (isConfirmed) mDiv.classList.add('confirmed');
+  
+  let badge = '<span class="pending-badge">⏳ PENDING</span>';
+  let conflictDetails = '';
+  
+  if (isConfirmed) {
+    badge = '<span class="confirmed-badge">✓ CONFIRMED</span>';
+  } else if (conflictInfo) {
+    if (conflictInfo.type === "3-way") {
+      mDiv.classList.add('conflict-3way');
+      badge = '<span class="conflict-3way-badge">⚠️ 3-WAY CONFLICT</span>';
+    } else {
+      mDiv.classList.add('conflict');
+      badge = '<span class="conflict-badge">⚠ CONFLICT</span>';
+    }
+    conflictDetails = '<div class="conflict-details">Also requested by: ' + 
+      conflictInfo.designers.filter(d => !d.includes(designerName.split(' ')[0])).join(', ') + '</div>';
+  }
+  
+  if (isBackup) mDiv.classList.add('backup');
+  
+  mDiv.innerHTML = 
+    '<div><span class="model-num">#' + num + '</span>' + badge +
+    (isBackup ? ' <em style="opacity:0.7;">[Backup]</em>' : '') +
+    '<span class="profile-link-icon">👤 View</span></div>' +
+    '<span class="model-name">' + (model ? model.name : 'Model ' + num) + '</span>' +
+    '<span class="model-height">' + (model ? model.height : '') + '</span>' + conflictDetails;
+  
+  return mDiv;
+}
+
+function createDesignerCard(designer, isPlaceholder) {
+  const div = document.createElement('div');
+  div.className = 'designer' + (isPlaceholder ? ' placeholder' : '');
+  
+  let looksDisplay = designer.looks !== null ? 
+    '<div class="looks-count">' + designer.looks + ' Looks Needed</div>' :
+    '<div class="looks-count" style="background:#999;">Looks TBD</div>';
+  
+  div.innerHTML = '<h2>' + designer.name + '</h2><h3>' + designer.brand + '</h3>' + looksDisplay;
+  
+  if (isPlaceholder) {
+    div.innerHTML += '<div class="placeholder-text">📋 ' + designer.placeholderText + '</div>';
+    if (designer.email) div.innerHTML += '<div style="text-align:center;margin-top:10px;color:#666;font-size:0.85em;">Contact: ' + designer.email + '</div>';
+  } else {
+    if (designer.pending) div.innerHTML += '<div class="pending-note">⏳ ' + designer.pending + '</div>';
     
-    <script>
-        // Initialize page-specific functionality
-        document.addEventListener('DOMContentLoaded', function() {
-            // Smooth scrolling for anchor links
-            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-                anchor.addEventListener('click', function (e) {
-                    e.preventDefault();
-                    document.querySelector(this.getAttribute('href')).scrollIntoView({
-                        behavior: 'smooth'
-                    });
-                });
-            });
-            
-            // Mobile menu functionality
-            const mobileMenuBtn = document.getElementById('mobile-menu-btn');
-            const mobileMenu = document.getElementById('mobile-menu');
-            
-            mobileMenuBtn.addEventListener('click', function() {
-                mobileMenu.classList.toggle('active');
-            });
-            
-            // Close mobile menu when clicking outside
-            document.addEventListener('click', function(e) {
-                if (!mobileMenu.contains(e.target) && !mobileMenuBtn.contains(e.target)) {
-                    mobileMenu.classList.remove('active');
-                }
-            });
-            
-            // Initialize aurora background animation
-            const heroSection = document.querySelector('.hero-section');
-            if (heroSection) {
-                let gradientAngle = 0;
-                setInterval(() => {
-                    gradientAngle += 0.5;
-                    heroSection.style.background = `
-                        linear-gradient(${gradientAngle}deg, 
-                            rgba(212, 175, 55, 0.1) 0%, 
-                            rgba(232, 213, 208, 0.1) 50%, 
-                            rgba(168, 181, 160, 0.1) 100%),
-                        url('resources/hero-fashion.jpg') center/cover no-repeat
-                    `;
-                }, 100);
-            }
-        });
-    </script>
+    const allModels = [...designer.primary, ...designer.backup];
+    allModels.forEach(num => {
+      const isBackup = designer.backup.includes(num);
+      div.appendChild(createModelCard(num, isBackup, designer.name, designer.confirmed || []));
+    });
+  }
+  
+  return div;
+}
+
+const rfaContainer = document.getElementById('rfa-showcase');
+rfaDesigners.forEach(designer => rfaContainer.appendChild(createDesignerCard(designer, designer.placeholder)));
+
+const individualContainer = document.getElementById('individual-showcase');
+individualDesigners.forEach(designer => individualContainer.appendChild(createDesignerCard(designer, designer.placeholder)));
+</script>
 </body>
 </html>
