@@ -361,5 +361,14 @@ rfaDesigners.forEach(designer => rfaContainer.appendChild(createDesignerCard(des
 const individualContainer = document.getElementById('individual-showcase');
 individualDesigners.forEach(designer => individualContainer.appendChild(createDesignerCard(designer, designer.placeholder)));
 </script>
+ <script>
+// Send height to parent page
+function sendHeight() {
+  const height = document.body.scrollHeight;
+  window.parent.postMessage({ height: height }, '*');
+}
+window.addEventListener('load', sendHeight);
+window.addEventListener('resize', sendHeight);
+</script>
 </body>
 </html>
